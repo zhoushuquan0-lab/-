@@ -177,9 +177,21 @@ function TopBar({ page, setPage }) {
             <span className="block text-xs text-brandMuted">MVP V1.0 · 小红书品牌内容决策系统</span>
           </span>
         </button>
-        <div className="hidden items-center gap-2 rounded-full border border-brandLine bg-white px-3 py-2 text-sm text-brandMuted shadow-sm md:flex">
-          <span className="h-2 w-2 rounded-full bg-brandGreen" />
-          当前模块：{navItems.find((item) => item.id === page)?.label}
+        <div className="flex items-center gap-2">
+          <div className="hidden items-center gap-2 rounded-full border border-brandLine bg-white px-3 py-2 text-sm text-brandMuted shadow-sm md:flex">
+            <span className="h-2 w-2 rounded-full bg-brandGreen" />
+            当前模块：{navItems.find((item) => item.id === page)?.label}
+          </div>
+          <button
+            onClick={() => setPage("developer")}
+            className={`rounded-full border px-3 py-2 text-xs font-bold shadow-sm transition ${
+              page === "developer"
+                ? "border-emerald-100 bg-brandGreen text-white"
+                : "border-brandLine bg-white text-brandNavy hover:border-brandGreen"
+            }`}
+          >
+            Developer Review
+          </button>
         </div>
       </div>
     </header>
