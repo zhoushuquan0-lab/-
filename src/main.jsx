@@ -25,8 +25,7 @@ const navItems = [
   { id: "topics", label: "选题生成" },
   { id: "draft", label: "笔记生成" },
   { id: "assets", label: "内容资产库" },
-  { id: "review", label: "数据复盘" },
-  { id: "developer", label: "Developer Review" }
+  { id: "review", label: "数据复盘" }
 ];
 
 const today = new Intl.DateTimeFormat("zh-CN", {
@@ -55,6 +54,7 @@ function scoreColor(score) {
 }
 
 function App() {
+  const hiddenPath = window.location.pathname;
   const [page, setPage] = useState("dashboard");
   const [selectedBrand, setSelectedBrand] = useState("jzt");
   const [selectedProduct, setSelectedProduct] = useState("jzt-oil");
@@ -110,6 +110,14 @@ function App() {
     setPage("assets");
   }
 
+  if (hiddenPath === "/review") {
+    return <InternalReview />;
+  }
+
+  if (hiddenPath === "/product-spec") {
+    return <ProductSpec />;
+  }
+
   return (
     <div className="min-h-screen bg-brandCream">
       <TopBar page={page} setPage={setPage} />
@@ -157,7 +165,6 @@ function App() {
           )}
           {page === "assets" && <Assets generatedAssets={generatedAssets} setPage={setPage} />}
           {page === "review" && <Review />}
-          {page === "developer" && <DeveloperReview generatedAssets={generatedAssets} />}
         </section>
       </main>
     </div>
@@ -177,21 +184,9 @@ function TopBar({ page, setPage }) {
             <span className="block text-xs text-brandMuted">MVP V1.0 · 小红书品牌内容决策系统</span>
           </span>
         </button>
-        <div className="flex items-center gap-2">
-          <div className="hidden items-center gap-2 rounded-full border border-brandLine bg-white px-3 py-2 text-sm text-brandMuted shadow-sm md:flex">
-            <span className="h-2 w-2 rounded-full bg-brandGreen" />
-            当前模块：{navItems.find((item) => item.id === page)?.label}
-          </div>
-          <button
-            onClick={() => setPage("developer")}
-            className={`rounded-full border px-3 py-2 text-xs font-bold shadow-sm transition ${
-              page === "developer"
-                ? "border-emerald-100 bg-brandGreen text-white"
-                : "border-brandLine bg-white text-brandNavy hover:border-brandGreen"
-            }`}
-          >
-            Developer Review
-          </button>
+        <div className="hidden items-center gap-2 rounded-full border border-brandLine bg-white px-3 py-2 text-sm text-brandMuted shadow-sm md:flex">
+          <span className="h-2 w-2 rounded-full bg-brandGreen" />
+          当前模块：{navItems.find((item) => item.id === page)?.label}
         </div>
       </div>
     </header>
@@ -807,6 +802,247 @@ function Review() {
           </Card>
         ))}
       </div>
+    </div>
+  );
+}
+
+function InternalReview() {
+  const previewPages = [
+    {
+      name: "首页 Dashboard",
+      purpose: "让运营人员先判断今天最值得写什么内容，而不是直接进入写作。",
+      preview: ["今日推荐内容机会", "推荐品牌 / 产品", "综合推荐评分", "推荐理由", "开始今日内容策划"]
+    },
+    {
+      name: "内容决策页",
+      purpose: "选择品牌、产品和内容目标，系统给出适合继续推进的内容方向。",
+      preview: ["品牌选择", "产品选择", "内容目标", "Content Score", "方向推荐"]
+    },
+    {
+      name: "选题生成页",
+      purpose: "围绕当前方向生成 20 个小红书选题，并展示人群、形式、理由和评分。",
+      preview: ["选题标题", "适合产品", "适合人群", "内容形式", "内容评分"]
+    },
+    {
+      name: "笔记生成页",
+      purpose: "生成小红书笔记草稿，并扩展图片 Brief 和短视频脚本。",
+      preview: ["标题备选", "正文草稿", "Image Brief", "Video Script", "复制按钮"]
+    },
+    {
+      name: "内容资产库",
+      purpose: "沉淀生成后的内容，支持后续审核、发布和复盘。",
+      preview: ["标题", "品牌", "产品", "内容方向", "状态", "操作"]
+    },
+    {
+      name: "数据复盘页",
+      purpose: "记录内容发布后的数据表现，并给出是否值得复用的复盘建议。",
+      preview: ["曝光", "阅读", "点赞", "收藏", "互动率", "AI复盘建议"]
+    }
+  ];
+
+  return (
+    <InternalShell eyebrow="Hidden Review" title="Brand Content Engine 内部产品评审">
+      <Card className="mb-5">
+        <h2 className="text-2xl font-bold text-brandNavy">用户流程图</h2>
+        <div className="mt-5 grid gap-3 md:grid-cols-7">
+          {["品牌", "产品", "机会判断", "选题生成", "笔记生成", "内容资产库", "数据复盘"].map((step, index) => (
+            <div key={step} className="relative rounded-2xl border border-brandLine bg-brandSoft p-4 text-center">
+              <p className="text-xs font-bold text-brandGreen">Step {index + 1}</p>
+              <p className="mt-2 text-sm font-bold text-brandNavy">{step}</p>
+            </div>
+          ))}
+        </div>
+      </Card>
+
+      <div className="grid gap-5 xl:grid-cols-2">
+        {previewPages.map((page) => (
+          <Card key={page.name}>
+            <p className="text-sm font-bold text-brandGreen">页面嵌入预览</p>
+            <h2 className="mt-2 text-xl font-bold text-brandNavy">{page.name}</h2>
+            <p className="mt-2 text-sm leading-6 text-brandMuted">{page.purpose}</p>
+            <div className="mt-4 rounded-2xl border border-brandLine bg-brandSoft p-4">
+              <div className="mb-3 flex items-center gap-2">
+                <span className="h-2 w-2 rounded-full bg-red-300" />
+                <span className="h-2 w-2 rounded-full bg-amber-300" />
+                <span className="h-2 w-2 rounded-full bg-emerald-300" />
+                <span className="ml-2 text-xs font-bold text-brandMuted">Static preview</span>
+              </div>
+              <div className="grid gap-2">
+                {page.preview.map((item) => (
+                  <div key={item} className="rounded-xl border border-brandLine bg-white px-3 py-2 text-sm font-semibold text-brandNavy">
+                    {item}
+                  </div>
+                ))}
+              </div>
+            </div>
+          </Card>
+        ))}
+      </div>
+
+      <div className="mt-5 grid gap-5 xl:grid-cols-2">
+        <Card>
+          <SectionBlock title="当前模拟数据">
+            <div className="grid grid-cols-2 gap-3 md:grid-cols-3">
+              <MiniMetric label="品牌" value={brandKnowledge.length} />
+              <MiniMetric label="产品" value={products.length} />
+              <MiniMetric label="内容机会" value={contentOpportunities.length} />
+              <MiniMetric label="内容方向" value={contentDirections.length} />
+              <MiniMetric label="选题模板" value={topicTemplates.length} />
+              <MiniMetric label="复盘样本" value={reviewRows.length} />
+            </div>
+          </SectionBlock>
+          <SectionBlock title="核心数据样例">
+            <ResponsiveTable
+              columns={["类型", "样例"]}
+              rows={[
+                ["品牌", brandKnowledge.map((item) => item.name).join(" / ")],
+                ["产品", products.map((item) => item.name).join(" / ")],
+                ["内容机会", contentOpportunities.map((item) => item.title).join(" / ")],
+                ["素材类型", materialTypes.join(" / ")]
+              ]}
+            />
+          </SectionBlock>
+        </Card>
+
+        <Card>
+          <SectionBlock title="后续可优化点">
+            <div className="space-y-3">
+              {[
+                "接入真实 AI：内容机会判断、选题生成、笔记生成、复盘建议。",
+                "接入真实内容数据：曝光、阅读、互动、收藏、评论、分享。",
+                "内容资产库持久化：保存审核状态、发布状态、复盘状态。",
+                "品牌知识库可编辑：品牌定位、产品卖点、禁用词、合规边界。",
+                "增加多人协作：运营、审核、老板查看权限。",
+                "增加导出能力：导出选题、笔记、图片 Brief、视频脚本。"
+              ].map((item) => (
+                <div key={item} className="rounded-xl border border-brandLine bg-brandSoft p-3 text-sm leading-6 text-brandMuted">
+                  {item}
+                </div>
+              ))}
+            </div>
+          </SectionBlock>
+        </Card>
+      </div>
+    </InternalShell>
+  );
+}
+
+function ProductSpec() {
+  return (
+    <InternalShell eyebrow="Product Spec" title="Brand Content Engine 产品说明">
+      <div className="grid gap-5 xl:grid-cols-[0.9fr_1.1fr]">
+        <Card>
+          <SectionBlock title="产品定位">
+            <p className="text-sm leading-7 text-brandMuted">
+              Brand Content Engine 是小红书品牌内容决策与生产系统，核心不是普通 AI 写作，而是帮助品牌运营人员判断今天最值得写什么内容，并完成从机会判断到内容复盘的闭环。
+            </p>
+          </SectionBlock>
+          <SectionBlock title="目标用户">
+            <div className="flex flex-wrap gap-2">
+              {["品牌运营", "内容策划", "媒介投放", "达人合作负责人", "增长负责人"].map((item) => (
+                <Tag key={item}>{item}</Tag>
+              ))}
+            </div>
+          </SectionBlock>
+        </Card>
+
+        <Card>
+          <SectionBlock title="用户流程">
+            <div className="space-y-3">
+              {["选择品牌与产品", "判断今日内容机会", "选择内容方向", "生成 20 个选题", "生成笔记 / 图片 Brief / 视频脚本", "进入内容资产库", "发布后数据复盘"].map(
+                (item, index) => (
+                  <div key={item} className="flex items-center gap-3 rounded-xl border border-brandLine bg-brandSoft p-3">
+                    <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-brandGreen text-xs font-bold text-white">
+                      {index + 1}
+                    </span>
+                    <span className="text-sm font-semibold text-brandNavy">{item}</span>
+                  </div>
+                )
+              )}
+            </div>
+          </SectionBlock>
+        </Card>
+      </div>
+
+      <div className="mt-5 grid gap-5 xl:grid-cols-2">
+        <Card>
+          <SectionBlock title="功能模块">
+            <ResponsiveTable
+              columns={["模块", "说明"]}
+              rows={[
+                ["Dashboard", "展示今日推荐内容机会、推荐品牌、推荐产品、推荐理由。"],
+                ["内容决策", "选择品牌、产品、内容目标，并输出内容方向评分。"],
+                ["选题生成", "生成 20 个小红书选题，包含人群、形式、理由和评分。"],
+                ["笔记生成", "生成标题、封面建议、正文、评论引导、关键词标签。"],
+                ["Image Brief", "生成封面方案、拍摄清单、构图建议、AI 图片 Prompt。"],
+                ["Video Script", "生成短视频标题、时长、分镜、口播、字幕和 B-roll。"],
+                ["内容资产库", "沉淀内容资产，支持审核、发布和复盘入口。"],
+                ["数据复盘", "记录内容数据，输出是否值得复用和优化建议。"]
+              ]}
+            />
+          </SectionBlock>
+        </Card>
+
+        <Card>
+          <SectionBlock title="数据结构">
+            <ResponsiveTable
+              columns={["数据表", "当前字段/内容"]}
+              rows={[
+                ["brandKnowledge", "品牌定位、核心产品、购买渠道、使用场景、语气"],
+                ["products", "品牌ID、产品名、卖点、渠道"],
+                ["contentOpportunities", "机会标题、评分、热点匹配、品牌匹配、推荐理由"],
+                ["contentDirections", "方向名称、说明、评分维度"],
+                ["topicTemplates", "选题标题模板"],
+                ["draftTemplate", "标题、封面、正文、拍摄建议、评论、标签"],
+                ["imageBriefTemplate", "封面方案、拍摄清单、Prompt、禁用表达"],
+                ["videoScriptTemplate", "标题、时长、分镜、口播、字幕、B-roll"],
+                ["assetLibrary", "标题、品牌、产品、方向、形式、时间、状态"],
+                ["reviewRows", "曝光、阅读、点赞、收藏、评论、分享、CTR、互动率"]
+              ]}
+            />
+          </SectionBlock>
+        </Card>
+      </div>
+
+      <Card className="mt-5">
+        <SectionBlock title="未来 Roadmap">
+          <div className="grid gap-3 md:grid-cols-4">
+            {[
+              { phase: "V1.1", text: "品牌知识库可编辑，支持新增产品和禁用词。" },
+              { phase: "V1.2", text: "接入真实 AI 生成，替换当前模拟模板。" },
+              { phase: "V1.3", text: "接入内容数据表，形成真实复盘闭环。" },
+              { phase: "V2.0", text: "支持团队协作、权限、审核流和导出。" }
+            ].map((item) => (
+              <div key={item.phase} className="rounded-2xl border border-brandLine bg-brandSoft p-4">
+                <p className="text-sm font-bold text-brandGreen">{item.phase}</p>
+                <p className="mt-2 text-sm leading-6 text-brandMuted">{item.text}</p>
+              </div>
+            ))}
+          </div>
+        </SectionBlock>
+      </Card>
+    </InternalShell>
+  );
+}
+
+function InternalShell({ eyebrow, title, children }) {
+  return (
+    <div className="min-h-screen bg-brandCream">
+      <main className="mx-auto w-full max-w-7xl px-4 py-8 lg:px-8">
+        <div className="mb-6 flex flex-col justify-between gap-4 border-b border-brandLine pb-5 md:flex-row md:items-center">
+          <div>
+            <p className="mb-2 text-sm font-bold text-brandGreen">{eyebrow}</p>
+            <h1 className="text-3xl font-bold tracking-tight text-brandNavy md:text-4xl">{title}</h1>
+            <p className="mt-3 max-w-3xl text-sm leading-6 text-brandMuted">
+              隐藏内部页面，仅用于产品评审和开发沟通；不会出现在正常导航和用户流程中。
+            </p>
+          </div>
+          <a href="/" className="rounded-xl border border-brandLine bg-white px-4 py-3 text-sm font-bold text-brandNavy shadow-sm">
+            返回首页
+          </a>
+        </div>
+        {children}
+      </main>
     </div>
   );
 }
