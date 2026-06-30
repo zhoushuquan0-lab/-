@@ -286,6 +286,48 @@ export const videoScriptTemplate = {
   creatorType: "香港旅游达人 / 万宁探店达人 / 真实体验型素人 / 轻养生生活博主"
 };
 
+export const developerReviewMode = {
+  systemStatus: [
+    { module: "Dashboard", status: "已完成", note: "今日内容机会、推荐品牌、推荐产品、推荐理由已接入静态数据。" },
+    { module: "内容决策", status: "已完成", note: "支持品牌、产品、内容目标选择，并展示内容方向评分。" },
+    { module: "选题生成", status: "已完成", note: "基于当前品牌、产品、方向生成 20 个模拟选题。" },
+    { module: "笔记生成", status: "已完成", note: "已包含标题、封面、正文、评论引导、标签、素材类型。" },
+    { module: "Image Brief", status: "已完成", note: "已输出封面方案、拍摄清单、构图建议、AI Prompt 和禁用表达。" },
+    { module: "Video Script", status: "已完成", note: "已输出短视频标题、时长、分镜、口播、字幕、B-roll 和达人类型。" },
+    { module: "内容资产库", status: "MVP", note: "当前为前端临时保存，刷新后新生成内容不会持久保存。" },
+    { module: "数据复盘", status: "MVP", note: "当前为模拟数据，后续可接入真实发布数据和 AI 复盘。" }
+  ],
+  dataSources: [
+    { name: "品牌知识库", file: "data.js", type: "静态数据", status: "已接入" },
+    { name: "产品知识库", file: "data.js", type: "静态数据", status: "已接入" },
+    { name: "内容机会库", file: "data.js", type: "静态数据", status: "已接入" },
+    { name: "选题模板库", file: "data.js", type: "静态数据", status: "已接入" },
+    { name: "笔记草稿模板", file: "data.js", type: "静态数据", status: "已接入" },
+    { name: "图片 Brief 模板", file: "data.js", type: "静态数据", status: "已接入" },
+    { name: "视频脚本模板", file: "data.js", type: "静态数据", status: "已接入" },
+    { name: "真实 AI 接口", file: "待接入", type: "API", status: "待接入" },
+    { name: "真实内容数据", file: "待接入", type: "数据库 / 表格", status: "待接入" }
+  ],
+  apiRoadmap: [
+    "OpenAI / ChatGPT：内容机会判断、选题生成、笔记生成、复盘建议",
+    "ChatGPT Image / Midjourney / 即梦：封面图和场景图生成",
+    "可灵 / Runway：短视频画面生成",
+    "小红书数据表：曝光、阅读、互动、收藏、评论回传",
+    "品牌知识库：品牌定位、产品卖点、禁用词、合规边界",
+    "内容资产库：持久化保存、审核状态、发布状态、复盘状态"
+  ],
+  launchChecklist: [
+    { item: "页面可正常访问", status: "通过" },
+    { item: "移动端和电脑端布局可用", status: "通过" },
+    { item: "所有模拟数据集中在 data.js", status: "通过" },
+    { item: "无真实 AI 接口依赖", status: "通过" },
+    { item: "复制按钮可用", status: "通过" },
+    { item: "内容刷新后持久保存", status: "待开发" },
+    { item: "真实小红书数据接入", status: "待开发" },
+    { item: "账号登录和权限", status: "待开发" }
+  ]
+};
+
 export const assetLibrary = [
   {
     id: "asset-001",

@@ -6,6 +6,7 @@ import {
   brandKnowledge,
   contentDirections,
   contentOpportunities,
+  developerReviewMode,
   draftTemplate,
   formats,
   goals,
@@ -24,7 +25,8 @@ const navItems = [
   { id: "topics", label: "选题生成" },
   { id: "draft", label: "笔记生成" },
   { id: "assets", label: "内容资产库" },
-  { id: "review", label: "数据复盘" }
+  { id: "review", label: "数据复盘" },
+  { id: "developer", label: "Developer Review" }
 ];
 
 const today = new Intl.DateTimeFormat("zh-CN", {
@@ -155,6 +157,7 @@ function App() {
           )}
           {page === "assets" && <Assets generatedAssets={generatedAssets} setPage={setPage} />}
           {page === "review" && <Review />}
+          {page === "developer" && <DeveloperReview generatedAssets={generatedAssets} />}
         </section>
       </main>
     </div>
@@ -793,6 +796,139 @@ function Review() {
         ))}
       </div>
     </div>
+  );
+}
+
+function DeveloperReview({ generatedAssets }) {
+  const staticAssets = assetLibrary.length;
+  const totalAssets = staticAssets + generatedAssets.length;
+  const stats = [
+    { label: "品牌数", value: brandKnowledge.length },
+    { label: "产品数", value: products.length },
+    { label: "内容机会", value: contentOpportunities.length },
+    { label: "内容方向", value: contentDirections.length },
+    { label: "选题模板", value: topicTemplates.length },
+    { label: "素材类型", value: materialTypes.length },
+    { label: "内容资产", value: totalAssets },
+    { label: "复盘样本", value: reviewRows.length }
+  ];
+
+  return (
+    <div>
+      <PageTitle
+        eyebrow="Developer Review Mode"
+        title="开发审查模式"
+        description="用于检查当前 MVP 的模块完成度、数据来源、上线状态和后续 API 接入位置。这个页面面向开发和内部检查，不影响日常内容生产流程。"
+      />
+
+      <Card className="mb-5">
+        <div className="flex flex-col justify-between gap-4 xl:flex-row xl:items-center">
+          <div>
+            <p className="text-sm font-bold text-brandGreen">MVP Build Status</p>
+            <h2 className="mt-2 text-2xl font-bold text-brandNavy">Brand Content Engine MVP V1.0</h2>
+            <p className="mt-2 max-w-2xl text-sm leading-6 text-brandMuted">
+              当前版本使用静态数据运行，已完成内容机会判断、选题生成、笔记草稿、图片 Brief、视频脚本和数据复盘基础链路。
+            </p>
+          </div>
+          <div className="rounded-2xl border border-emerald-100 bg-emerald-50 px-5 py-4 text-brandGreen">
+            <p className="text-xs font-bold">当前状态</p>
+            <p className="mt-1 text-2xl font-bold">可运行</p>
+          </div>
+        </div>
+        <div className="mt-5 grid grid-cols-2 gap-3 md:grid-cols-4">
+          {stats.map((item) => (
+            <MiniMetric key={item.label} label={item.label} value={item.value} />
+          ))}
+        </div>
+      </Card>
+
+      <div className="grid gap-5 xl:grid-cols-[1.1fr_0.9fr]">
+        <Card>
+          <SectionBlock title="模块完成度">
+            <div className="grid gap-3">
+              {developerReviewMode.systemStatus.map((item) => (
+                <ReviewRow key={item.module} title={item.module} status={item.status} note={item.note} />
+              ))}
+            </div>
+          </SectionBlock>
+        </Card>
+
+        <Card>
+          <SectionBlock title="上线检查项">
+            <div className="grid gap-3">
+              {developerReviewMode.launchChecklist.map((item) => (
+                <ChecklistRow key={item.item} item={item.item} status={item.status} />
+              ))}
+            </div>
+          </SectionBlock>
+        </Card>
+      </div>
+
+      <div className="mt-5 grid gap-5 xl:grid-cols-2">
+        <Card>
+          <SectionBlock title="数据源状态">
+            <ResponsiveTable
+              columns={["数据源", "文件/位置", "类型", "状态"]}
+              rows={developerReviewMode.dataSources.map((source) => [
+                <span className="font-bold text-brandNavy">{source.name}</span>,
+                source.file,
+                source.type,
+                <StatusPill status={source.status} />
+              ])}
+            />
+          </SectionBlock>
+        </Card>
+
+        <Card>
+          <SectionBlock title="后续 API 接入清单">
+            <div className="space-y-3">
+              {developerReviewMode.apiRoadmap.map((item) => (
+                <div key={item} className="rounded-xl border border-brandLine bg-brandSoft p-3 text-sm leading-6 text-brandMuted">
+                  {item}
+                </div>
+              ))}
+            </div>
+          </SectionBlock>
+        </Card>
+      </div>
+    </div>
+  );
+}
+
+function ReviewRow({ title, status, note }) {
+  return (
+    <div className="rounded-2xl border border-brandLine bg-brandSoft p-4">
+      <div className="flex flex-col justify-between gap-2 sm:flex-row sm:items-center">
+        <h3 className="font-bold text-brandNavy">{title}</h3>
+        <StatusPill status={status} />
+      </div>
+      <p className="mt-2 text-sm leading-6 text-brandMuted">{note}</p>
+    </div>
+  );
+}
+
+function ChecklistRow({ item, status }) {
+  return (
+    <div className="flex items-center justify-between gap-3 rounded-xl border border-brandLine bg-brandSoft px-4 py-3">
+      <span className="text-sm font-semibold text-brandNavy">{item}</span>
+      <StatusPill status={status} />
+    </div>
+  );
+}
+
+function StatusPill({ status }) {
+  const styles = {
+    已完成: "border-emerald-100 bg-emerald-50 text-brandGreen",
+    已接入: "border-emerald-100 bg-emerald-50 text-brandGreen",
+    通过: "border-emerald-100 bg-emerald-50 text-brandGreen",
+    MVP: "border-amber-100 bg-amber-50 text-brandGold",
+    待接入: "border-slate-200 bg-slate-50 text-brandMuted",
+    待开发: "border-slate-200 bg-slate-50 text-brandMuted"
+  };
+  return (
+    <span className={`shrink-0 rounded-full border px-3 py-1 text-xs font-bold ${styles[status] ?? styles["待开发"]}`}>
+      {status}
+    </span>
   );
 }
 
